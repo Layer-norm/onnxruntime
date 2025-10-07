@@ -204,8 +204,8 @@ def print_debug_info():
         packages = [
             "torch",
             "nvidia-cuda-runtime-cu12",
-            "nvidia-cudnn-cu12",
-            "nvidia-cublas-cu12",
+            "nvidia-cudnn-cu13",
+            "nvidia-cublas",
             "nvidia-cufft-cu12",
             "nvidia-curand-cu12",
             "nvidia-cuda-nvrtc-cu12",
