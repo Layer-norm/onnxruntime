@@ -1961,9 +1961,12 @@ def build_python_wheel(
         # The following arguments are mutually exclusive
         if use_cuda:
             # The following line assumes no other EP is enabled
-            args.append("--wheel_name_suffix=gpu")
             cuda_version = cuda_version or parse_cuda_version_from_json(cuda_home)
-            if cuda_version:
+            if cuda_version and cuda_version.startswith("13."):
+                args.append("--wheel_name_suffix=gpu-cu13")
+                args.append(f"--cuda_version={cuda_version}")
+            elif cuda_version:
+                args.append("--wheel_name_suffix=gpu")
                 args.append(f"--cuda_version={cuda_version}")
         elif use_rocm:
             args.append("--use_rocm")

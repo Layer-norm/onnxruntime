@@ -1,5 +1,5 @@
 project(OnnxruntimeJSIHelper)
-cmake_minimum_required(VERSION 3.9.0)
+cmake_minimum_required(VERSION 3.11)
 
 set (PACKAGE_NAME "onnxruntime-react-native")
 set (BUILD_DIR ${CMAKE_SOURCE_DIR}/build)

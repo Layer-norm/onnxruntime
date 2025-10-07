@@ -199,13 +199,32 @@ def print_debug_info():
             "Please 'pip uninstall` all above packages, then `pip install` only one of them.\033[0m"
         )
 
-    if cuda_version:
+    if cuda_version and cuda_version.startswith("13."):
         # Print version of installed packages that is related to CUDA or cuDNN DLLs.
         packages = [
             "torch",
             "nvidia-cuda-runtime-cu12",
             "nvidia-cudnn-cu13",
             "nvidia-cublas",
+            "nvidia-cufft-cu12",
+            "nvidia-curand-cu12",
+            "nvidia-cuda-nvrtc-cu12",
+            "nvidia-nvjitlink-cu12",
+        ]
+        for package in packages:
+            directory_name = "nvidia" if package.startswith("nvidia-") else None
+            version = _get_package_version(package)
+            if version:
+                print(f"{package}=={version} at {_get_package_root(package, directory_name)}")
+            else:
+                print(f"{package} not installed")
+    elif cuda_version:
+        # Print version of installed packages that is related to CUDA or cuDNN DLLs.
+        packages = [
+            "torch",
+            "nvidia-cuda-runtime-cu12",
+            "nvidia-cudnn-cu12",
+            "nvidia-cublas-cu12",
             "nvidia-cufft-cu12",
             "nvidia-curand-cu12",
             "nvidia-cuda-nvrtc-cu12",
@@ -289,14 +308,14 @@ def preload_dlls(cuda: bool = True, cudnn: bool = True, msvc: bool = True, direc
             print("Microsoft Visual C++ Redistributable is not installed, this may lead to the DLL load failure.")
             print("It can be downloaded at https://aka.ms/vs/17/release/vc_redist.x64.exe.")
 
-    if not (cuda_version and cuda_version.startswith("12.")) and (cuda or cudnn):
+    if not (cuda_version and cuda_version.startswith(("12.", "13."))) and (cuda or cudnn):
         print(
             f"\033[33mWARNING: {package_name} is not built with CUDA 12.x support. "
             "Please install a version that supports CUDA 12.x, or call preload_dlls with cuda=False and cudnn=False.\033[0m"
         )
         return
 
-    if not (cuda_version and cuda_version.startswith("12.") and (cuda or cudnn)):
+    if not (cuda_version and cuda_version.startswith(("12.", "13.")) and (cuda or cudnn)):
         return
 
     is_cuda_cudnn_imported_by_torch = False
