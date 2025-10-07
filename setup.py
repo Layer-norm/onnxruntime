@@ -55,17 +55,19 @@ wheel_name_suffix = parse_arg_remove_string(sys.argv, "--wheel_name_suffix=")
 
 cuda_version = None
 is_cuda_version_12 = False
+is_cuda_version_13 = False
 rocm_version = None
 is_migraphx = False
 is_openvino = False
 is_qnn = False
 qnn_version = None
 # The following arguments are mutually exclusive
-if wheel_name_suffix == "gpu":
+if wheel_name_suffix == "gpu" or wheel_name_suffix == "gpu-cu13":
     # TODO: how to support multiple CUDA versions?
     cuda_version = parse_arg_remove_string(sys.argv, "--cuda_version=")
     if cuda_version:
         is_cuda_version_12 = cuda_version.startswith("12.")
+        is_cuda_version_13 = cuda_version.startswith("13.")
 elif parse_arg_remove_boolean(sys.argv, "--use_migraphx"):
     is_migraphx = True
     package_name = "onnxruntime-migraphx"
@@ -745,7 +747,7 @@ if local_version:
     version_number = version_number + local_version
 
 if wheel_name_suffix:
-    if not (enable_training and wheel_name_suffix == "gpu"):
+    if not (enable_training and wheel_name_suffix in ("gpu", "gpu-cu13")):
         # for training packages, local version is used to indicate device types
         package_name = f"{package_name}-{wheel_name_suffix}"
 
@@ -811,6 +813,19 @@ if package_name == "onnxruntime-gpu" and is_cuda_version_12:
         ],
         "cudnn": [
             "nvidia-cudnn-cu12~=9.0",
+        ],
+    }
+
+if package_name == "onnxruntime-gpu-cu13" and is_cuda_version_13:
+    extras_require = {
+        "cuda": [
+            "nvidia-cuda-nvrtc-cu12~=12.0",
+            "nvidia-cuda-runtime-cu12~=12.0",
+            "nvidia-cufft-cu12~=11.0",
+            "nvidia-curand-cu12~=10.0",
+        ],
+        "cudnn": [
+            "nvidia-cudnn-cu13>=9.13",
         ],
     }
 
