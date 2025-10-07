@@ -110,7 +110,7 @@ else()
     EXCLUDE_FROM_ALL
   )
 
-  FetchContent_Populate(directx_headers)
+  FetchContent_MakeAvailable(directx_headers)
   set(directx_headers_INCLUDE_DIRS  "${directx_headers_SOURCE_DIR}/include")
   include_directories(BEFORE ${directx_headers_INCLUDE_DIRS})
 endif()
